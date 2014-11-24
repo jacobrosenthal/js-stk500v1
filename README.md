@@ -34,6 +34,22 @@ var programmer = new stk500(serialPort);
 
 Beyond that you can send stk500 commands. For programming the process is a fairly strict series of async series including connect, reset, sync, setOptions (pagesize is the only necessary option), enterprogrammingmode, program, exitprogrammingmode, disconnect. See uno.js in examples.
 
+
+###How to get a hex
+
+You can compile by hand yourself with avrdude if you know your stuff, or you can just steal one from Arduino. First make sure you have verbosity enabled in your Arduino preferences: Arduino Preferences -> check Show verbose output during Compilation. Now when you build you'll see a ton of lines on screen. The last couple lines have what you need:
+```
+/var/folders/zp/bpw8zd0141j5zf7l8m_qtt8w0000gp/T/build6252696906929781517.tmp/Blink.cpp.hex 
+
+Sketch uses 896 bytes (2%) of program storage space. Maximum is 32,256 bytes.
+Global variables use 9 bytes (0%) of dynamic memory, leaving 2,039 bytes for local variables. Maximum is 2,048 bytes.
+```
+Grab that hex file and you're good to go.
+
 ###CHANGELOG
-0.1.0 
+0.0.1 
 first
+
+0.0.2
+Added loading from fs to example, some example hexes from arduino 1.0.6 for Uno, and instructions on how to find a hex file to load.
+
