@@ -61,7 +61,7 @@ SerialPort.list(function (err, ports) {
   		async.series([
         programmer.connect.bind(programmer),
         programmer.reset.bind(programmer,delay1, delay2),
-        programmer.sync.bind(programmer, 200),
+        programmer.sync.bind(programmer, 3),
         programmer.setOptions.bind(programmer, options),
         programmer.enterProgrammingMode.bind(programmer),
         programmer.upload.bind(programmer, hex, pageSize),
