@@ -6,9 +6,9 @@ https://github.com/Pinoccio/js-stk500
 
 Note for
 ###Gotchas
-* Only works on MacOSX. Requires on Chris Williams excellent nodeserial implementation https://github.com/voodootikigod/node-serialport. However nodeserial doesn't currently support manual rts/dtr signaling so I have a fork with OSX bindings https://github.com/jacobrosenthal/node-serialport/tree/controlsignals
+* Only works on MacOSX (and probably linux). Requires on Chris Williams excellent nodeserial implementation https://github.com/voodootikigod/node-serialport. However nodeserial doesn't currently support manual rts/dtr signaling so I have a fork with unix bindings https://github.com/jacobrosenthal/node-serialport/tree/controlsignals
 * Since I'm forking nodeserial and not hosting a new version yet I've got a postinstall step that tries to run ./postinstall to kick off a fresh build.
-* You'll need a buffer of bytes to program. You can dig a hex out of the Arduino IDE as I did in the uno example for blink and blank and run it through intel-hex. intel-hex isnt actually required by the library currently but included for convenience currently.
+* intel-hex and fs are dependancies only for the example file
 
 ###INSTALL
 ```
@@ -55,3 +55,6 @@ Added loading from fs to example, some example hexes from arduino 1.0.6 for Uno,
 
 0.0.3
 Bugs squashed leading to much more stable getsync and less attempts necessary to successfuly programmin. Slight refactor in example and clearer console.log messaging.
+
+0.0.4
+Slight require change for browserfy-ability and a few more touchups in example
