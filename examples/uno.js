@@ -59,31 +59,16 @@ SerialPort.list(function (err, ports) {
   		var programmer = new stk500(serialPort);
 
   		async.series([
-  			function(cbdone){
-  				programmer.connect(cbdone);
-  			},
-  			function(cbdone){
-          programmer.reset(delay1, delay2, cbdone);
-  			},
-  			function(cbdone){
-  				programmer.sync(3, cbdone);
-  			},
-  			function(cbdone){
-  				programmer.setOptions(options, cbdone);
-  			},
-  			function(cbdone){
-  				programmer.enterProgrammingMode(cbdone);
-  			},
-  			function(cbdone){
-  				programmer.upload(hex, pageSize, cbdone);
-  			},
-  			function(cbdone){
-  				programmer.exitProgrammingMode(cbdone);
-  			},
-  			function(cbdone){
-  				programmer.disconnect(cbdone);
-  			}
-  		], function(error){
+        programmer.connect.bind(programmer),
+        programmer.reset.bind(programmer,delay1, delay2),
+        programmer.sync.bind(programmer, 200),
+        programmer.setOptions.bind(programmer, options),
+        programmer.enterProgrammingMode.bind(programmer),
+        programmer.upload.bind(programmer, hex, pageSize),
+        programmer.exitProgrammingMode.bind(programmer),
+        programmer.disconnect.bind(programmer)
+        
+      ], function(error){
         if(error){
           console.log("finished programming with errors: " + error);
         }else{
