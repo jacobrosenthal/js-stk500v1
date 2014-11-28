@@ -44,12 +44,12 @@ var options = {
 SerialPort.list(function (err, ports) {
   ports.forEach(function(port) {
 
-    console.log("trying " + port.comName);
+    console.log("found " + port.comName);
  
   	if(usbttyRE.test(port.comName))
   	{
 
-			console.log("found");
+			console.log("trying" + port.comName);
 
 			var serialPort = new SerialPort.SerialPort(port.comName, {
 			  baudrate: 115200,
