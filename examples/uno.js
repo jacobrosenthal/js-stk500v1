@@ -44,7 +44,7 @@ var options = {
 SerialPort.list(function (err, ports) {
   ports.forEach(function(port) {
 
-  	console.log("comname " + port.comName);
+    console.log("trying " + port.comName);
  
   	if(usbttyRE.test(port.comName))
   	{
@@ -70,13 +70,17 @@ SerialPort.list(function (err, ports) {
         
       ], function(error){
         if(error){
-          console.log("finished programming with errors: " + error);
+          console.log("programing FAILED: " + error);
+          process.exit(1);
         }else{
-          console.log("programing complete!");
+          console.log("programing SUCCESS!");
+          process.exit(0);
         }
   		});
 
-  	}
+    }else{
+      console.log("skipping " + port.comName);
+    }
 
   });
 });
