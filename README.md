@@ -58,3 +58,6 @@ Bugs squashed leading to much more stable getsync and less attempts necessary to
 
 0.0.4
 Slight require change for browserfy-ability and a few more touchups in example
+
+0.0.5
+Fixed instability issue especially in chrome where listeners were not being deregistered
