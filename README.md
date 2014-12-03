@@ -61,3 +61,6 @@ Slight require change for browserfy-ability and a few more touchups in example
 
 0.0.5
 Fixed instability issue especially in chrome where listeners were not being deregistered
+
+0.0.6
+Added ability to verify device signature.
