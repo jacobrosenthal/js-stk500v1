@@ -1,6 +1,6 @@
 var SerialPort = require("serialport");
 var intel_hex = require('intel-hex');
-var stk500 = require('../lib/stk500');
+var stk500 = require('../');
 var async = require("async");
 var fs = require('fs');
 
