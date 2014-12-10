@@ -19,26 +19,7 @@ var delay1 = 70; //Seems to want ~ 70ms reset high
 var delay2 = 1;
 var signature = new Buffer([0x1e, 0x94, 0x06]);
 var options = {
-  devicecode:0,
-  revision:0,
-  progtype:0,
-  parmode:0,
-  polling:0,
-  selftimed:0,
-  lockbytes:0,
-  fusebytes:0,
-  flashpollval1:0,
-  flashpollval2:0,
-  eeprompollval1:0,
-  eeprompollval2:0,
-  pagesizehigh:0,
-  pagesizelow:pageSize,
-  eepromsizehigh:0,
-  eepromsizelow:0,
-  flashsize4:0,
-  flashsize3:0,
-  flashsize2:0,
-  flashsize1:0
+  pagesizelow:pageSize
 };
 
 SerialPort.list(function (err, ports) {
