@@ -52,7 +52,7 @@ SerialPort.list(function (err, ports) {
 			console.log("trying" + port.comName);
 
 			var serialPort = new SerialPort.SerialPort(port.comName, {
-			  baudrate: 115200,
+			  baudrate: baud,
 			  parser: SerialPort.parsers.raw
 			}, false);
 
