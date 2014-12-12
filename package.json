@@ -9,7 +9,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "./postinstall.sh"
-
   },
   "repository": "https://github.com/jacobrosenthal/js-stk500v1",
   "keywords": [
@@ -20,6 +19,7 @@
   "author": "Jacob Rosenthal",
   "license": "MIT",
   "dependencies": {
+    "CBuffer": "^1.0.0",
     "async": "^0.9.0",
     "buffer-equal": "0.0.1",
     "intel-hex": "^0.1.1",
