@@ -14,8 +14,6 @@ var hex = intel_hex.parse(data).data;
 //uno
 var pageSize = 128;
 var baud = 115200;
-var delay1 = 1; //minimum is 2.5us, so anything over 1 fine?
-var delay2 = 1;
 var signature = new Buffer([0x1e, 0x95, 0x0f]);
 var options = {
   pagesizelow:pageSize
@@ -34,32 +32,36 @@ SerialPort.list(function (err, ports) {
 			var serialPort = new SerialPort.SerialPort(port.comName, {
 			  baudrate: baud,
 			  parser: SerialPort.parsers.raw
-			}, false);
+			});
 
-  		var programmer = new stk500(serialPort);
+      serialPort.on('open', function(){
 
-  		async.series([
-        programmer.connect.bind(programmer),
-        programmer.reset.bind(programmer,delay1, delay2),
-        programmer.sync.bind(programmer, 3),
-        programmer.verifySignature.bind(programmer, signature),
-        programmer.setOptions.bind(programmer, options),
-        programmer.enterProgrammingMode.bind(programmer),
-        programmer.upload.bind(programmer, hex, pageSize),
-        programmer.exitProgrammingMode.bind(programmer)
-        
-      ], function(error){
+        var programmer = new stk500(serialPort);
 
-        programmer.disconnect();
+        async.series([
+          programmer.sync.bind(programmer, 3),
+          programmer.verifySignature.bind(programmer, signature),
+          programmer.setOptions.bind(programmer, options),
+          programmer.enterProgrammingMode.bind(programmer),
+          programmer.upload.bind(programmer, hex, pageSize),
+          programmer.exitProgrammingMode.bind(programmer)
+          
+        ], function(error){
 
-        if(error){
-          console.log("programing FAILED: " + error);
-          process.exit(1);
-        }else{
-          console.log("programing SUCCESS!");
-          process.exit(0);
-        }
-  		});
+          serialPort.close(function (error) {
+            console.log(error);
+          });
+
+          if(error){
+            console.log("programing FAILED: " + error);
+            process.exit(1);
+          }else{
+            console.log("programing SUCCESS!");
+            process.exit(0);
+          }
+        });
+
+      });
 
     }else{
       console.log("skipping " + port.comName);
