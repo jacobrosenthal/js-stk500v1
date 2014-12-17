@@ -6,17 +6,15 @@ var fs = require('fs');
 
 var usbttyRE = /(cu\.usb|ttyACM|COM\d+)/;
 
-var data = fs.readFileSync('arduino-1.0.6/uno/Blink.cpp.hex', { encoding: 'utf8' });
+var data = fs.readFileSync('arduino-1.0.6/uno/StandardFirmata.cpp.hex', { encoding: 'utf8' });
 
 var hex = intel_hex.parse(data).data;
 
-//TODO standardize chip configs
-//uno
-var pageSize = 128;
-var baud = 115200;
-var signature = new Buffer([0x1e, 0x95, 0x0f]);
-var options = {
-  pagesizelow:pageSize
+var uno = {
+  baud: 115200,
+  signature: new Buffer([0x1e, 0x95, 0x0f]),
+  pageSize: 128,
+  timeout: 400
 };
 
 SerialPort.list(function (err, ports) {
@@ -30,7 +28,7 @@ SerialPort.list(function (err, ports) {
 			console.log("trying" + port.comName);
 
 			var serialPort = new SerialPort.SerialPort(port.comName, {
-			  baudrate: baud,
+			  baudrate: uno.baud,
 			  parser: SerialPort.parsers.raw
 			});
 
@@ -38,15 +36,7 @@ SerialPort.list(function (err, ports) {
 
         var programmer = new stk500(serialPort);
 
-        async.series([
-          programmer.sync.bind(programmer, 3),
-          programmer.verifySignature.bind(programmer, signature),
-          programmer.setOptions.bind(programmer, options),
-          programmer.enterProgrammingMode.bind(programmer),
-          programmer.upload.bind(programmer, hex, pageSize),
-          programmer.exitProgrammingMode.bind(programmer)
-          
-        ], function(error){
+        programmer.bootload(hex, uno, function(error){
 
           serialPort.close(function (error) {
             console.log(error);
@@ -59,6 +49,7 @@ SerialPort.list(function (err, ports) {
             console.log("programing SUCCESS!");
             process.exit(0);
           }
+
         });
 
       });
