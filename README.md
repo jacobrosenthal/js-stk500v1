@@ -3,9 +3,6 @@ Fully javascript stk500v1 programmer. Allows you to program Arduinos straight fr
 
 Huge thanks to Pinoccio for their stk500v2 browser implementation (for Arduino Megas, etc) from which I stole whole lines of code. We're working to unify our programmers with some sort of overarching module. For now see [js-stk500](https://github.com/Pinoccio/js-stk500) to program Arduino Mega and Pinoccio's
 
-###NOTE
-[intel-hex](https://www.npmjs.com/package/intel-hex) [serialport](https://www.npmjs.com/package/serialport) and [fs](http://nodejs.org/api/fs.html) are dependencies only for the examples, not the library
-
 ###INSTALL
 ```
 npm install stk500
