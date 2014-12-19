@@ -1,8 +1,8 @@
 var async = require("async");
 var bufferEqual = require('buffer-equal');
 
-var Statics = require('./statics');
-var sendCommand = require('./sendCommand');
+var Statics = require('./lib/statics');
+var sendCommand = require('./lib/sendCommand');
 
 function sync(stream, attempts, timeout, done) {
 	console.log("sync");
