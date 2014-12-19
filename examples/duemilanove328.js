@@ -4,14 +4,14 @@ var Stk500 = require('../');
 var async = require("async");
 var fs = require('fs');
 
-var data = fs.readFileSync('arduino-1.0.6/168/StandardFirmata.cpp.hex', { encoding: 'utf8' });
+var data = fs.readFileSync('arduino-1.0.6/duemilanove328/StandardFirmata.cpp.hex', { encoding: 'utf8' });
 
 var hex = intel_hex.parse(data).data;
 
 var board = {
-  name: "Diecimila / Duemilanove 168",
-  baud: 19200,
-  signature: new Buffer([0x1e, 0x94, 0x06]),
+  name: "Duemilanove 328",
+  baud: 57600,
+  signature: new Buffer([0x1e, 0x95, 0x0F]),
   pageSize: 128,
   timeout: 400
 };
