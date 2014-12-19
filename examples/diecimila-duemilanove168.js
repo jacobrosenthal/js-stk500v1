@@ -1,7 +1,6 @@
 var SerialPort = require("serialport");
 var intel_hex = require('intel-hex');
 var Stk500 = require('../');
-var async = require("async");
 var fs = require('fs');
 
 var data = fs.readFileSync('arduino-1.0.6/168/StandardFirmata.cpp.hex', { encoding: 'utf8' });
