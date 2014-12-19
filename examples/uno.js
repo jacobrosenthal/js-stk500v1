@@ -1,63 +1,53 @@
 var SerialPort = require("serialport");
 var intel_hex = require('intel-hex');
-var stk500 = require('../');
+var Stk500 = require('../');
 var async = require("async");
 var fs = require('fs');
-
-var usbttyRE = /(cu\.usb|ttyACM|COM\d+)/;
 
 var data = fs.readFileSync('arduino-1.0.6/uno/StandardFirmata.cpp.hex', { encoding: 'utf8' });
 
 var hex = intel_hex.parse(data).data;
 
-var uno = {
+var board = {
+  name: "Arduino Uno",
   baud: 115200,
   signature: new Buffer([0x1e, 0x95, 0x0f]),
   pageSize: 128,
   timeout: 400
 };
 
-SerialPort.list(function (err, ports) {
-  ports.forEach(function(port) {
+function upload(path, done){
 
-    console.log("found " + port.comName);
- 
-  	if(usbttyRE.test(port.comName))
-  	{
+  var serialPort = new SerialPort.SerialPort(path, {
+    baudrate: board.baud,
+  });
 
-			console.log("trying" + port.comName);
+  serialPort.on('open', function(){
 
-			var serialPort = new SerialPort.SerialPort(port.comName, {
-			  baudrate: uno.baud,
-			  parser: SerialPort.parsers.raw
-			});
+    Stk500.bootload(serialPort, hex, board, function(error){
 
-      serialPort.on('open', function(){
-
-        var programmer = new stk500(serialPort);
-
-        programmer.bootload(hex, uno, function(error){
-
-          serialPort.close(function (error) {
-            console.log(error);
-          });
-
-          if(error){
-            console.log("programing FAILED: " + error);
-            process.exit(1);
-          }else{
-            console.log("programing SUCCESS!");
-            process.exit(0);
-          }
-
-        });
-
+      serialPort.close(function (error) {
+        console.log(error);
       });
 
-    }else{
-      console.log("skipping " + port.comName);
-    }
+      done(error);
+    });
 
   });
-});
 
+}
+
+if(process && process.argv && process.argv[2])
+{
+  upload(process.argv[2], function(error){
+    if(!error)
+    {
+      console.log("programing SUCCESS!");
+      process.exit(0);
+    }
+  });
+}else
+{
+  console.log("call with a path like /dev/tty.something");
+  process.exit(0);
+}
