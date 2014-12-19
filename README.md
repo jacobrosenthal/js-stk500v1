@@ -1,14 +1,10 @@
 ##stk500
-Fully javascript stk500v1 programmer. Allows you to program Arduinos straight from node (or browser for that matter). No more avrdude system calls or using the arduino IDE.
+Fully javascript stk500v1 programmer. Allows you to program Arduinos straight from node (or browser for that matter -- see [browserdude](github.com/jacobrosenthal/browserdude). No more avrdude system calls or using the arduino IDE.
 
-Huge thanks to Pinoccio for their stk500v2 browser implementation (for Arduino Megas, etc) from which I stole whole lines of code. In lieu of properly licensing atm, I'm hoping to unify our work in the future.
-https://github.com/Pinoccio/js-stk500
+Huge thanks to Pinoccio for their stk500v2 browser implementation (for Arduino Megas, etc) from which I stole whole lines of code. We're working to unify our programmers with some sort of overarching module. For now see [js-stk500](https://github.com/Pinoccio/js-stk500) to program Arduino Mega and Pinoccio's
 
-Note for
-###Gotchas
-* Only works on MacOSX (and probably linux). Requires on Chris Williams excellent nodeserial implementation https://github.com/voodootikigod/node-serialport. However nodeserial doesn't currently support manual rts/dtr signaling so I have a fork with unix bindings https://github.com/jacobrosenthal/node-serialport/tree/controlsignals
-* Since I'm forking nodeserial and not hosting a new version yet I've got a postinstall step that tries to run ./postinstall to kick off a fresh build.
-* intel-hex and fs are dependancies only for the example file
+###NOTE
+[intel-hex](https://www.npmjs.com/package/intel-hex) [serialport](https://www.npmjs.com/package/serialport) and [fs](http://nodejs.org/api/fs.html) are dependencies only for the examples, not the library
 
 ###INSTALL
 ```
@@ -17,22 +13,49 @@ npm install stk500
 
 ####Program:
 
-You need an *unconnected* instance of (my fork of) Chris Williams's Node Serial Port at the correct speed for your chip (commonly 115200) with a raw parser.
+You need a stream object, commonly [serialport](https://www.npmjs.com/package/serialport) with the correct speed for your chip (115200 for the uno) and path to your device  :
 ```
-var serialPort = new SerialPort.SerialPort(port.comName, {
-  baudrate: 115200,
-  parser: SerialPort.parsers.raw
-}, false);
+var SerialPort = require("serialport");
+var serialPort = new SerialPort.SerialPort("/dev/tty.something", {
+baudrate: 115200,
+});
+```
+
+We've included some examples hexes, and you can parse them with the [intel-hex](https://www.npmjs.com/package/intel-hex):
+```
+var intel_hex = require('intel-hex');
+var fs = require('fs');
+
+var data = fs.readFileSync('arduino-1.0.6/uno/StandardFirmata.cpp.hex', { encoding: 'utf8' });
+
+var hex = intel_hex.parse(data).data;
 
 ```
 
-Then you can instantiate a programmer.
+With [serialport](https://www.npmjs.com/package/serialport), you need to wait for your open event, but then you can bootload:
 ```
-var programmer = new stk500(serialPort);
+var Stk500 = require('stk500');
+
+serialPort.on('open', function(){
+
+	var board = {
+	  signature: new Buffer([0x1e, 0x95, 0x0f]),
+	  pageSize: 128,
+	  timeout: 400
+	};
+
+	Stk500.bootload(serialPort, hex, board, function(error){
+
+	  serialPort.close(function (error) {
+	    console.log(error);
+	  });
+
+	  done(error);
+	});
+
+});
 
 ```
-
-Beyond that you can send stk500 commands. For programming the process is a fairly strict series of async series including connect, reset, sync, setOptions (pagesize is the only necessary option), enterprogrammingmode, program, exitprogrammingmode, disconnect. See uno.js in examples.
 
 
 ###How to get a hex
@@ -64,3 +87,13 @@ Fixed instability issue especially in chrome where listeners were not being dere
 
 0.0.6
 Added ability to verify device signature.
+
+1.0.0
+* Nearly complete rearchitecture.
+* Moved away from constructor.
+* Take a stream object instead of an explicit node serial object now, though node serial is a stream so no change for most users.
+* No connect, reset or disconnect anymore, it is now your job to send it a recently reset (opened) connection thats ready to go.
+* Added verify command
+* Added bootload convenience function that takes a board options object
+* Added more examples
+
