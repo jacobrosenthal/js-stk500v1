@@ -94,3 +94,12 @@ Added ability to verify device signature.
 * Added bootload convenience function that takes a board options object
 * Added more examples
 
+1.0.1
+Clean up dependencies
+
+1.0.2
+Remove postinstall
+
+1.0.3
+* Better errors
+* More Tests
