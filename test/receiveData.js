@@ -11,7 +11,7 @@ describe('receiveData', function () {
   });
 
   it('should receive a matching buffer', function (done) {
-    var inputBuffer = new Buffer([Statics.Resp_STK_INSYNC, 2]);
+    var inputBuffer = Statics.OK_RESPONSE;
     receiveData(this.port, 10, inputBuffer.length, function (err, data) {
       if (err) {
         return done(err);
@@ -26,10 +26,10 @@ describe('receiveData', function () {
   });
 
   it('should timeout', function (done) {
-    var inputBuffer = new Buffer([Statics.Resp_STK_INSYNC, 2]);
+    var inputBuffer = Statics.OK_RESPONSE;
     receiveData(this.port, 10, inputBuffer.length, function (err, data) {
       if (err) {
-        err.message.should.equal('timeout');
+        err.message.should.equal('receiveData timeout after 10ms');
         return done();
       }
       done(new Error('Did not time out'));
@@ -38,7 +38,7 @@ describe('receiveData', function () {
   });
 
   it('should receive a buffer in chunks', function (done) {
-    var inputBuffer = new Buffer([Statics.Resp_STK_INSYNC, 2]);
+    var inputBuffer = Statics.OK_RESPONSE;
     receiveData(this.port, 10, inputBuffer.length, function (err, data) {
       if (err) {
         return done(err);
