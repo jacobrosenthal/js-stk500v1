@@ -3,7 +3,7 @@ var intel_hex = require('intel-hex');
 var Stk500 = require('../');
 var fs = require('fs');
 
-var data = fs.readFileSync('arduino-1.0.6/uno/StandardFirmata.cpp.hex', { encoding: 'utf8' });
+var data = fs.readFileSync('arduino-1.0.6/uno/Blink.cpp.hex', { encoding: 'utf8' });
 
 var hex = intel_hex.parse(data).data;
 
@@ -15,6 +15,8 @@ var board = {
   timeout: 400
 };
 
+var stk500 = new Stk500({quiet: true});
+
 function upload(path, done){
 
   var serialPort = new SerialPort.SerialPort(path, {
@@ -23,7 +25,7 @@ function upload(path, done){
 
   serialPort.on('open', function(){
 
-    Stk500.bootload(serialPort, hex, board, function(error){
+    stk500.bootload(serialPort, hex, board, function(error){
 
       serialPort.close(function (error) {
         console.log(error);
@@ -41,7 +43,7 @@ if(process && process.argv && process.argv[2])
   upload(process.argv[2], function(error){
     if(!error)
     {
-      console.log("programing SUCCESS!");
+      console.log("programming succeeded!");
       process.exit(0);
     }
   });
