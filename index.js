@@ -1,11 +1,16 @@
 var async = require("async");
 var bufferEqual = require('buffer-equal');
-
 var Statics = require('./lib/statics');
 var sendCommand = require('./lib/sendCommand');
 
-function sync(stream, attempts, timeout, done) {
-	console.log("sync");
+var stk500 = function (opts) {
+  this.opts = opts || {};
+  this.quiet = this.opts.quiet || false;
+  this.log = (this.quiet) ? function(){} : console.log;
+}
+
+stk500.prototype.sync = function (stream, attempts, timeout, done) {
+	this.log("sync");
 	var self = this;
 	var tries = 1;
 
@@ -21,21 +26,20 @@ function sync(stream, attempts, timeout, done) {
     sendCommand(stream, opt, function (err, data) {
 			if (err && tries <= attempts) {
         if (err) {
-          console.log(err);
-          console.error(err.stack);
+          self.log(err);
         }
-				console.log("failed attempt again", tries);
+				self.log("failed attempt again", tries);
 				return attempt();
       }
-      console.log('sync complete', err, data, tries);
+      self.log('sync complete', err, data, tries);
       done(err, data);
     });
   }
   attempt();
 };
 
-function verifySignature(stream, signature, timeout, done) {
-	console.log("verify signature");
+stk500.prototype.verifySignature = function (stream, signature, timeout, done) {
+	this.log("verify signature");
 	var self = this;
 	match = Buffer.concat([
     new Buffer([Statics.Resp_STK_INSYNC]),
@@ -51,13 +55,13 @@ function verifySignature(stream, signature, timeout, done) {
     timeout: timeout
   };
   sendCommand(stream, opt, function (err, data) {
-		console.log('confirm signature', err, data, data.toString('hex'));
+		self.log('confirm signature', err, data, data.toString('hex'));
     done(err, data);
   });
 };
 
-function getSignature(stream, timeout, done) {
-	console.log("get signature");
+stk500.prototype.getSignature = function (stream, timeout, done) {
+	this.log("get signature");
   var opt = {
     cmd: [
       Statics.Cmnd_STK_READ_SIGN
@@ -66,13 +70,13 @@ function getSignature(stream, timeout, done) {
     timeout: timeout
   };
   sendCommand(stream, opt, function (err, data) {
-    console.log('getSignature', err, data);
+    this.log('getSignature', err, data);
     done(err, data);
   });
 };
 
-function setOptions (stream, options, timeout, done) {
-	console.log("set device");
+stk500.prototype.setOptions = function (stream, options, timeout, done) {
+	this.log("set device");
 	var self = this;
 	
   var opt = {
@@ -103,7 +107,7 @@ function setOptions (stream, options, timeout, done) {
     timeout: timeout
   };
   sendCommand(stream, opt, function (err, data) {
-    console.log('setOptions', err, data);
+    self.log('setOptions', err, data);
     if (err) {
       return done(err);
     }
@@ -111,8 +115,9 @@ function setOptions (stream, options, timeout, done) {
   });
 };
 
-function enterProgrammingMode(stream, timeout, done) {
-	console.log("send enter programming mode");
+stk500.prototype.enterProgrammingMode = function (stream, timeout, done) {
+	this.log("send enter programming mode");
+  var self = this;
   var opt = {
     cmd: [
       Statics.Cmnd_STK_ENTER_PROGMODE
@@ -121,13 +126,14 @@ function enterProgrammingMode(stream, timeout, done) {
     timeout: timeout
   };
   sendCommand(stream, opt, function (err, data) {
-		console.log("sent enter programming mode", err, data);
+		self.log("sent enter programming mode", err, data);
     done(err, data);
   });
 };
 
-function loadAddress(stream, useaddr, timeout, done) {
-	console.log("load address");
+stk500.prototype.loadAddress = function (stream, useaddr, timeout, done) {
+	this.log("load address");
+  var self = this;
 	var addr_low = useaddr & 0xff;
 	var addr_high = (useaddr >> 8) & 0xff;
   var opt = {
@@ -140,13 +146,14 @@ function loadAddress(stream, useaddr, timeout, done) {
     timeout: timeout
   };
   sendCommand(stream, opt, function (err, data) {
-		console.log('loaded address', err, data);
+		self.log('loaded address', err, data);
     done(err, data);
   });
 };
 
-function loadPage(stream, writeBytes, timeout, done) {
-	console.log("load page");
+stk500.prototype.loadPage = function (stream, writeBytes, timeout, done) {
+	this.log("load page");
+  var self = this;
 	var bytes_low = writeBytes.length & 0xff;
 	var bytes_high = writeBytes.length >> 8;
 
@@ -162,13 +169,13 @@ function loadPage(stream, writeBytes, timeout, done) {
     timeout: timeout
   };
   sendCommand(stream, opt, function (err, data) {
-		console.log('loaded page', err, data);
+		self.log('loaded page', err, data);
     done(err, data);
   });
 };
 
-function upload(stream, hex, pageSize, timeout, done) {
-	console.log("program");
+stk500.prototype.upload = function (stream, hex, pageSize, timeout, done) {
+	this.log("program");
 
 	var pageaddr = 0;
 	var writeBytes;
@@ -180,7 +187,7 @@ function upload(stream, hex, pageSize, timeout, done) {
   async.whilst(
     function() { return pageaddr < hex.length; },
     function(pagedone) {
-			console.log("program page");
+			self.log("program page");
       async.series([
       	function(cbdone){
       		useaddr = pageaddr >> 1;
@@ -198,25 +205,26 @@ function upload(stream, hex, pageSize, timeout, done) {
         	self.loadPage(stream, writeBytes, timeout, cbdone);
         },
         function(cbdone){
-					console.log("programmed page");
+					self.log("programmed page");
         	pageaddr =  pageaddr + writeBytes.length;
         	setTimeout(cbdone, 4);
         }
       ],
       function(error) {
-      	console.log("page done");
+      	self.log("page done");
       	pagedone(error);
       });
     },
     function(error) {
-    	console.log("upload done");
+    	self.log("upload done");
     	done(error);
     }
   );
 };
 
-function exitProgrammingMode(stream, timeout, done) {
-	console.log("send leave programming mode");
+stk500.prototype.exitProgrammingMode = function (stream, timeout, done) {
+	this.log("send leave programming mode");
+  var self = this;
   var opt = {
     cmd: [
       Statics.Cmnd_STK_LEAVE_PROGMODE
@@ -225,13 +233,13 @@ function exitProgrammingMode(stream, timeout, done) {
     timeout: timeout
   };
   sendCommand(stream, opt, function (err, data) {
-		console.log('sent leave programming mode', err, data);
+		self.log('sent leave programming mode', err, data);
     done(err, data);
   });
 };
 
-function verify(stream, hex, pageSize, timeout, done) {
-	console.log("verify");
+stk500.prototype.verify = function (stream, hex, pageSize, timeout, done) {
+	this.log("verify");
 
 	var pageaddr = 0;
 	var writeBytes;
@@ -243,7 +251,7 @@ function verify(stream, hex, pageSize, timeout, done) {
   async.whilst(
     function() { return pageaddr < hex.length; },
     function(pagedone) {
-			console.log("verify page");
+			self.log("verify page");
       async.series([
       	function(cbdone){
       		useaddr = pageaddr >> 1;
@@ -261,25 +269,25 @@ function verify(stream, hex, pageSize, timeout, done) {
         	self.verifyPage(stream, writeBytes, pageSize, timeout, cbdone);
         },
         function(cbdone){
-					console.log("verified page");
+					self.log("verified page");
         	pageaddr =  pageaddr + writeBytes.length;
         	setTimeout(cbdone, 4);
         }
       ],
       function(error) {
-      	console.log("verify done");
+      	self.log("verify done");
       	pagedone(error);
       });
     },
     function(error) {
-    	console.log("verify done");
+    	self.log("verify done");
     	done(error);
     }
   );
 };
 
-function verifyPage(stream, writeBytes, pageSize, timeout, done) {
-	console.log("verify page");
+stk500.prototype.verifyPage = function (stream, writeBytes, pageSize, timeout, done) {
+	this.log("verify page");
 	var self = this;
 	match = Buffer.concat([
     new Buffer([Statics.Resp_STK_INSYNC]),
@@ -300,12 +308,12 @@ function verifyPage(stream, writeBytes, pageSize, timeout, done) {
     timeout: timeout
   };
   sendCommand(stream, opt, function (err, data) {
-		console.log('confirm page', err, data, data.toString('hex'));
+		self.log('confirm page', err, data, data.toString('hex'));
     done(err, data);
-  });
+  }); 
 };
 
-function bootload(stream, hex, opt, done){
+stk500.prototype.bootload = function (stream, hex, opt, done) {
 
   var parameters = {
     pagesizehigh: (opt.pagesizehigh<<8 & 0xff),
@@ -325,17 +333,4 @@ function bootload(stream, hex, opt, done){
   });
 };
 
-module.exports = {
-  sync: sync,
-  getSignature: getSignature,
-  verifySignature: verifySignature,
-  setOptions: setOptions,
-  enterProgrammingMode: enterProgrammingMode,
-  upload: upload,
-  loadAddress: loadAddress,
-  loadPage: loadPage,
-  verify: verify,
-  verifyPage: verifyPage,
-  exitProgrammingMode: exitProgrammingMode,
-  bootload: bootload
-};
+module.exports = stk500;
