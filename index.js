@@ -6,7 +6,15 @@ var sendCommand = require('./lib/sendCommand');
 var stk500 = function (opts) {
   this.opts = opts || {};
   this.quiet = this.opts.quiet || false;
-  this.log = (this.quiet) ? function(){} : console.log.bind(window);
+  if(this.quiet){
+    this.log = function(){};
+  }else{
+    if(window){
+      this.log = console.log.bind(window);
+    }else{
+      this.log = console.log;
+    }
+  }
 }
 
 stk500.prototype.sync = function (stream, attempts, timeout, done) {
