@@ -1,14 +1,14 @@
-##stk500
+## stk500
 Fully javascript stk500v1 programmer. Allows you to program Arduinos straight from node (or browser for that matter -- see [browserdude](github.com/jacobrosenthal/browserdude). No more avrdude system calls or using the arduino IDE.
 
 Huge thanks to Pinoccio for their stk500v2 browser implementation (for Arduino Megas, etc) from which I stole whole lines of code. We're working to unify our programmers with some sort of overarching module. For now see [js-stk500](https://github.com/Pinoccio/js-stk500) to program Arduino Mega and Pinoccio's
 
-###INSTALL
+### INSTALL
 ```
 npm install stk500
 ```
 
-####Program:
+#### Program:
 
 You need a stream object, commonly [serialport](https://www.npmjs.com/package/serialport) with the correct speed for your chip (115200 for the uno) and path to your device  :
 ```
@@ -55,7 +55,7 @@ serialPort.on('open', function(){
 ```
 
 
-###How to get a hex
+### How to get a hex
 
 You can compile by hand yourself with avrdude if you know your stuff, or you can just steal one from Arduino. First make sure you have verbosity enabled in your Arduino preferences: Arduino Preferences -> check Show verbose output during Compilation. Now when you build you'll see a ton of lines on screen. The last couple lines have what you need:
 ```
@@ -66,7 +66,7 @@ Global variables use 9 bytes (0%) of dynamic memory, leaving 2,039 bytes for loc
 ```
 Grab that hex file and you're good to go.
 
-###CHANGELOG
+### CHANGELOG
 0.0.1 
 first
 
