@@ -333,6 +333,9 @@ stk500.prototype.bootload = function (stream, hex, opt, done) {
   }
 
   async.series([
+    // send two dummy syncs like avrdude does
+    this.sync.bind(this, stream, 3, opt.timeout),
+    this.sync.bind(this, stream, 3, opt.timeout),
     this.sync.bind(this, stream, 3, opt.timeout),
     this.verifySignature.bind(this, stream, opt.signature, opt.timeout),
     this.setOptions.bind(this, stream, parameters, opt.timeout),
