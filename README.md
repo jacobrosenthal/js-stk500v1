@@ -103,3 +103,9 @@ Remove postinstall
 1.0.3
 * Better errors
 * More Tests
+
+2.0.0
+* convert module to constructor
+
+2.0.1
+* fix timeout especially around Chrome OS 74 
