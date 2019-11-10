@@ -1,7 +1,6 @@
 var Statics = require('../lib/statics');
 var receiveData = require('../lib/receiveData');
 var es = require('event-stream');
-var bufferEqual = require('buffer-equal');
 
 describe('receiveData', function () {
   beforeEach(function () {
@@ -17,7 +16,7 @@ describe('receiveData', function () {
         return done(err);
       }
       Should.not.exist(err);
-      var matched = bufferEqual(data, inputBuffer);
+      var matched = data.equals(inputBuffer);
       Should.exist(matched);
       matched.should.equal(true);
       done();
@@ -44,7 +43,7 @@ describe('receiveData', function () {
         return done(err);
       }
       Should.not.exist(err);
-      var matched = bufferEqual(data, inputBuffer);
+      var matched = data.equals(inputBuffer);
       Should.exist(matched);
       matched.should.equal(true);
       done();

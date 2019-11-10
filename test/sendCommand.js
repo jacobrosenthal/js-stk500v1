@@ -2,7 +2,6 @@ var sinon = require("sinon");
 var Statics = require('../lib/statics');
 var sendCommand = require('../lib/sendCommand');
 var es = require('event-stream');
-var bufferEqual = require('buffer-equal');
 
 var EventEmitter = require('events').EventEmitter;
 
@@ -32,14 +31,14 @@ describe('sendCommands', function () {
 
   it('should write a buffer command', function (done) {
     var writeSpy = sandbox.spy(hardware, 'write');
-    var cmd = new Buffer([Statics.Cmnd_STK_GET_SYNC, Statics.Sync_CRC_EOP]);
+    var cmd = Buffer.from([Statics.Cmnd_STK_GET_SYNC, Statics.Sync_CRC_EOP]);
     var opt = {
       cmd: cmd,
       responseData: Statics.OK_RESPONSE,
       timeout: 10
     };
     sendCommand(hardware, opt, function (err, data) {
-      var matched = bufferEqual(writeSpy.args[0][0], cmd);
+      var matched = writeSpy.args[0][0].equals(cmd);
       Should.exist(matched);
       matched.should.equal(true);
       done();
@@ -59,7 +58,7 @@ describe('sendCommands', function () {
       timeout: 10
     };
     sendCommand(hardware, opt, function (err, data) {
-      var matched = bufferEqual(writeSpy.args[0][0], new Buffer([Statics.Cmnd_STK_GET_SYNC, Statics.Sync_CRC_EOP]));
+      var matched = writeSpy.args[0][0].equals(Buffer.from([Statics.Cmnd_STK_GET_SYNC, Statics.Sync_CRC_EOP]));
       Should.exist(matched);
       matched.should.equal(true);
       done();
@@ -103,7 +102,7 @@ describe('sendCommands', function () {
         return done(err);
       }
       Should.not.exist(err);
-      var matched = bufferEqual(data, Statics.OK_RESPONSE);
+      var matched = data.equals(Statics.OK_RESPONSE);
       Should.exist(matched);
       matched.should.equal(true);
       done();
@@ -128,7 +127,7 @@ describe('sendCommands', function () {
         return done(err);
       }
       Should.not.exist(err);
-      var matched = bufferEqual(data, Statics.OK_RESPONSE);
+      var matched = data.equals(Statics.OK_RESPONSE);
       Should.exist(matched);
       matched.should.equal(true);
       done();

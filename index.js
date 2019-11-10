@@ -1,5 +1,4 @@
 var async = require("async");
-var bufferEqual = require('buffer-equal');
 var Statics = require('./lib/statics');
 var sendCommand = require('./lib/sendCommand');
 
@@ -50,9 +49,9 @@ stk500.prototype.verifySignature = function (stream, signature, timeout, done) {
 	this.log("verify signature");
 	var self = this;
 	match = Buffer.concat([
-    new Buffer([Statics.Resp_STK_INSYNC]),
+    Buffer.from([Statics.Resp_STK_INSYNC]),
     signature,
-    new Buffer([Statics.Resp_STK_OK])
+    Buffer.from([Statics.Resp_STK_OK])
   ]);
 
   var opt = {
@@ -170,9 +169,9 @@ stk500.prototype.loadPage = function (stream, writeBytes, timeout, done) {
 	var bytes_high = writeBytes.length >> 8;
 
 	var cmd = Buffer.concat([
-    new Buffer([Statics.Cmnd_STK_PROG_PAGE, bytes_high, bytes_low, 0x46]),
+    Buffer.from([Statics.Cmnd_STK_PROG_PAGE, bytes_high, bytes_low, 0x46]),
     writeBytes,
-    new Buffer([Statics.Sync_CRC_EOP])
+    Buffer.from([Statics.Sync_CRC_EOP])
   ]);
 
   var opt = {
@@ -302,9 +301,9 @@ stk500.prototype.verifyPage = function (stream, writeBytes, pageSize, timeout, d
 	this.log("verify page");
 	var self = this;
 	match = Buffer.concat([
-    new Buffer([Statics.Resp_STK_INSYNC]),
+    Buffer.from([Statics.Resp_STK_INSYNC]),
     writeBytes,
-    new Buffer([Statics.Resp_STK_OK])
+    Buffer.from([Statics.Resp_STK_OK])
   ]);
 
 	var size = writeBytes.length >= pageSize ? pageSize : writeBytes.length;
