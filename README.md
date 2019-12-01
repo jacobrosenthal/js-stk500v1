@@ -109,3 +109,6 @@ Remove postinstall
 
 2.0.1
 * fix timeout especially around Chrome OS 74 
+
+2.0.2
+* update Buffer methods to replace deprecated constructor use
