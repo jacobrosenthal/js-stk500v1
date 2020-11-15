@@ -8,7 +8,7 @@ var stk500 = function (opts) {
   if(this.quiet){
     this.log = function(){};
   }else{
-    if(window){
+    if(typeof window === 'object'){
       this.log = console.log.bind(window);
     }else{
       this.log = console.log;
