@@ -1,5 +1,5 @@
 ## stk500
-Fully javascript stk500v1 programmer. Allows you to program Arduinos straight from node (or browser for that matter -- see [browserdude](github.com/jacobrosenthal/browserdude). No more avrdude system calls or using the arduino IDE.
+Fully javascript stk500v1 programmer. Allows you to program Arduinos straight from node (or browser for that matter -- see [browserdude](https://github.com/jacobrosenthal/browserdude). No more avrdude system calls or using the arduino IDE.
 
 Huge thanks to Pinoccio for their stk500v2 browser implementation (for Arduino Megas, etc) from which I stole whole lines of code. We're working to unify our programmers with some sort of overarching module. For now see [js-stk500](https://github.com/Pinoccio/js-stk500) to program Arduino Mega and Pinoccio's
 
