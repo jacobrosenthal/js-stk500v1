@@ -48,7 +48,7 @@ stk500.prototype.sync = function (stream, attempts, timeout, done) {
 stk500.prototype.verifySignature = function (stream, signature, timeout, done) {
 	this.log("verify signature");
 	var self = this;
-	match = Buffer.concat([
+	var match = Buffer.concat([
     Buffer.from([Statics.Resp_STK_INSYNC]),
     signature,
     Buffer.from([Statics.Resp_STK_OK])
@@ -300,7 +300,7 @@ stk500.prototype.verify = function (stream, hex, pageSize, timeout, done) {
 stk500.prototype.verifyPage = function (stream, writeBytes, pageSize, timeout, done) {
 	this.log("verify page");
 	var self = this;
-	match = Buffer.concat([
+	var match = Buffer.concat([
     Buffer.from([Statics.Resp_STK_INSYNC]),
     writeBytes,
     Buffer.from([Statics.Resp_STK_OK])
