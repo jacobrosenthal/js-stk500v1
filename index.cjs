@@ -1,6 +1,6 @@
 var async = require("async");
-var Statics = require('./lib/statics');
-var sendCommand = require('./lib/sendCommand');
+var Statics = require('./lib/statics.cjs');
+var sendCommand = require('./lib/sendCommand.cjs');
 
 var stk500 = function (opts) {
   this.opts = opts || {};
@@ -185,7 +185,7 @@ stk500.prototype.loadPage = function (stream, writeBytes, timeout, done) {
   });
 };
 
-stk500.prototype.upload = function (stream, hex, pageSize, timeout, done) {
+stk500.prototype.upload = function (stream, hex, pageSize, timeout, dontShiftPageAddr, done) {
 	this.log("program");
 
 	var pageaddr = 0;
@@ -201,7 +201,11 @@ stk500.prototype.upload = function (stream, hex, pageSize, timeout, done) {
 			self.log("program page");
       async.series([
       	function(cbdone){
-      		useaddr = pageaddr >> 1;
+          if (dontShiftPageAddr) {
+            useaddr = pageaddr;
+          } else {
+            useaddr = pageaddr >> 1;
+          }
       		cbdone();
       	},
       	function(cbdone){
@@ -339,7 +343,7 @@ stk500.prototype.bootload = function (stream, hex, opt, done) {
     this.verifySignature.bind(this, stream, opt.signature, opt.timeout),
     this.setOptions.bind(this, stream, parameters, opt.timeout),
     this.enterProgrammingMode.bind(this, stream, opt.timeout),
-    this.upload.bind(this, stream, hex, opt.pageSize, opt.timeout),
+    this.upload.bind(this, stream, hex, opt.pageSize, opt.timeout, opt.dontShiftPageAddr),
     this.verify.bind(this, stream, hex, opt.pageSize, opt.timeout),
     this.exitProgrammingMode.bind(this, stream, opt.timeout)
   ], function(error){

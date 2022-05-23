@@ -2,7 +2,7 @@
   "name": "stk500",
   "version": "2.0.3",
   "description": "Fully javascript stk500v1 programmer. Allows you to program Arduinos straight from node (or browser for that matter). No more avrdude system calls or using the arduino IDE.",
-  "main": "index.js",
+  "main": "index.cjs",
   "directories": {
     "example": "examples"
   },
@@ -25,7 +25,9 @@
     "mocha": "^2.0.1",
     "should": "^4.4.1",
     "intel-hex": "^0.1.1",
-    "serialport": "^1.4.0",
     "sinon": "^1.12.2"
+  },
+  "overrides": {
+    "graceful-fs": "4.2.10"
   }
 }
