@@ -185,8 +185,27 @@ stk500.prototype.loadPage = function (stream, writeBytes, timeout, done) {
   });
 };
 
-stk500.prototype.upload = function (stream, hex, pageSize, timeout, dontShiftPageAddr, done) {
+stk500.prototype.upload = function () {
 	this.log("program");
+
+  var stream, hex, pageSize, timeout, dontShiftPageAddr, done;
+  // to make it backward compatible, i.e. without the `dontShiftPageAddr` argument and
+  // with the callback `done` as last parameter, to be used in `async.sequence`
+  if (arguments.length === 6) {
+    stream = arguments[0];
+    hex = arguments[1];
+    pageSize = arguments[2];
+    timeout = arguments[3];
+    dontShiftPageAddr = arguments[4];
+    done = arguments[5];
+  } else {
+    stream = arguments[0];
+    hex = arguments[1];
+    pageSize = arguments[2];
+    timeout = arguments[3];
+    dontShiftPageAddr = undefined;
+    done = arguments[4];
+  }
 
 	var pageaddr = 0;
 	var writeBytes;
