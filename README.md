@@ -2,9 +2,8 @@
 Fully javascript stk500v1 programmer. 
 
 ## NOTE
-This is a patched version to support Arduino Uno WiFi Rev2, which
-supports a non-zero start address, as retrieved from the 
-intel-hex parse method.
+Version 2.1.0 is a patched version to support Arduino Uno WiFi Rev2, which
+requires a differents start address when uploading a sketch.
 Updated by [Christian Sarnataro](c.sarnataro@arduino.cc) in the context of [IOT-1813](https://arduino.atlassian.net/browse/IOT-1813).
 
 A proper PR against the origin repo is on our roadmap.
