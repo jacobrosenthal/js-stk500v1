@@ -319,7 +319,11 @@ stk500.prototype.verifyPage = function (stream, writeBytes, pageSize, timeout, d
     timeout: timeout
   };
   sendCommand(stream, opt, function (err, data) {
-		self.log('confirm page', err, data, data.toString('hex'));
+    if(data){
+      self.log('confirm page', err, data, data.toString('hex'));
+    }else{
+      self.log('confirm page', err, 'no data');
+    }
     done(err, data);
   }); 
 };
