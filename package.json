@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "event-stream": "^3.1.7",
-    "mocha": "^2.0.1",
+    "mocha": "^10.2.0",
     "should": "^4.4.1",
     "intel-hex": "^0.1.1",
     "serialport": "^1.4.0",
